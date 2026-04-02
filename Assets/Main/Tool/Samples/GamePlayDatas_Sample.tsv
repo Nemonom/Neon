@@ -1,0 +1,4 @@
+difficulty	spawnInterval	maxEnemyCount	enemySpeedMultiplier	contactDamage	scorePerLetter	comboBonusStep	startHp
+Easy	1.4	6	0.9	10	8	0.08	120
+Normal	1.1	8	1.0	12	10	0.10	100
+Hard	0.85	10	1.2	16	12	0.14	90
