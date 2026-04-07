@@ -200,7 +200,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_BackGroundColor: {r: 0.02, g: 0.02, b: 0.05, a: 1}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -225,7 +225,7 @@ Camera:
   far clip plane: 1000
   field of view: 34
   orthographic: 1
-  orthographic size: 5
+  orthographic size: 6
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -369,6 +369,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d3612fae1d5deb541a33fb8ba7fea790, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Manager
+  gameDatas: {fileID: 11400000, guid: d6eeca153b7918d469313190f85edcee, type: 2}
+  gamePlayDatas: {fileID: 11400000, guid: ebdffbaf7e526e74889f2a1bc348ab5c, type: 2}
+  enemyTypes:
+  - {fileID: 11400000, guid: 655edce69022a2a43b26bd3f02f0453f, type: 2}
+  enemyPrefab: {fileID: 0}
+  enemyRoot: {fileID: 0}
+  coreAnchor: {fileID: 0}
+  hud: {fileID: 0}
+  screenFlash: {fileID: 0}
+  startingDifficulty: Normal
+  initialSpawnCount: 3
+  spawnRadius: 8
+  coreHitRadius: 0.8
+  pauseKey: 27
+  autoStart: 1
 --- !u!4 &901175247
 Transform:
   m_ObjectHideFlags: 0

@@ -1,6 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+#if ENABLE_INPUT_SYSTEM
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Controls;
+#endif
 
 public class Manager : MonoBehaviour
 {
@@ -53,12 +57,12 @@ public class Manager : MonoBehaviour
 
     private void Update()
     {
-        if (isGameOver && Input.GetKeyDown(KeyCode.R)) {
+        if (isGameOver && IsRebootPressed()) {
             RebootGame();
             return;
         }
 
-        if (Input.GetKeyDown(pauseKey)) {
+        if (IsPausePressed()) {
             TogglePause();
         }
 
@@ -162,19 +166,86 @@ public class Manager : MonoBehaviour
 
     private void HandleTypingInput()
     {
-        string input = Input.inputString;
-        if (string.IsNullOrEmpty(input)) {
+        List<char> typedCharacters = new();
+        bool collectedLegacyInput = CollectLegacyInput(typedCharacters);
+#if ENABLE_INPUT_SYSTEM
+        if (!collectedLegacyInput) {
+            CollectInputSystemInput(typedCharacters);
+        }
+#endif
+
+        if (typedCharacters.Count == 0) {
             return;
         }
 
-        foreach (char rawChar in input) {
-            if (!char.IsLetter(rawChar)) {
-                continue;
-            }
-
-            HandleTypedCharacter(char.ToUpperInvariant(rawChar));
+        for (int i = 0; i < typedCharacters.Count; i++) {
+            HandleTypedCharacter(typedCharacters[i]);
         }
     }
+
+    private bool CollectLegacyInput(List<char> buffer)
+    {
+#if ENABLE_LEGACY_INPUT_MANAGER
+        string input = Input.inputString;
+        if (string.IsNullOrEmpty(input)) {
+            return false;
+        }
+
+        for (int i = 0; i < input.Length; i++) {
+            char rawChar = input[i];
+            if (char.IsLetter(rawChar)) {
+                buffer.Add(char.ToUpperInvariant(rawChar));
+            }
+        }
+
+        return buffer.Count > 0;
+#else
+        return false;
+#endif
+    }
+
+#if ENABLE_INPUT_SYSTEM
+    private void CollectInputSystemInput(List<char> buffer)
+    {
+        if (Keyboard.current == null) {
+            return;
+        }
+
+        TryAppendLetter(Keyboard.current.aKey, 'A', buffer);
+        TryAppendLetter(Keyboard.current.bKey, 'B', buffer);
+        TryAppendLetter(Keyboard.current.cKey, 'C', buffer);
+        TryAppendLetter(Keyboard.current.dKey, 'D', buffer);
+        TryAppendLetter(Keyboard.current.eKey, 'E', buffer);
+        TryAppendLetter(Keyboard.current.fKey, 'F', buffer);
+        TryAppendLetter(Keyboard.current.gKey, 'G', buffer);
+        TryAppendLetter(Keyboard.current.hKey, 'H', buffer);
+        TryAppendLetter(Keyboard.current.iKey, 'I', buffer);
+        TryAppendLetter(Keyboard.current.jKey, 'J', buffer);
+        TryAppendLetter(Keyboard.current.kKey, 'K', buffer);
+        TryAppendLetter(Keyboard.current.lKey, 'L', buffer);
+        TryAppendLetter(Keyboard.current.mKey, 'M', buffer);
+        TryAppendLetter(Keyboard.current.nKey, 'N', buffer);
+        TryAppendLetter(Keyboard.current.oKey, 'O', buffer);
+        TryAppendLetter(Keyboard.current.pKey, 'P', buffer);
+        TryAppendLetter(Keyboard.current.qKey, 'Q', buffer);
+        TryAppendLetter(Keyboard.current.rKey, 'R', buffer);
+        TryAppendLetter(Keyboard.current.sKey, 'S', buffer);
+        TryAppendLetter(Keyboard.current.tKey, 'T', buffer);
+        TryAppendLetter(Keyboard.current.uKey, 'U', buffer);
+        TryAppendLetter(Keyboard.current.vKey, 'V', buffer);
+        TryAppendLetter(Keyboard.current.wKey, 'W', buffer);
+        TryAppendLetter(Keyboard.current.xKey, 'X', buffer);
+        TryAppendLetter(Keyboard.current.yKey, 'Y', buffer);
+        TryAppendLetter(Keyboard.current.zKey, 'Z', buffer);
+    }
+
+    private static void TryAppendLetter(KeyControl key, char value, List<char> buffer)
+    {
+        if (key != null && key.wasPressedThisFrame) {
+            buffer.Add(value);
+        }
+    }
+#endif
 
     private void HandleTypedCharacter(char character)
     {
@@ -348,5 +419,35 @@ public class Manager : MonoBehaviour
 
         yield return new WaitForSeconds(0.08f);
         Destroy(enemy.gameObject);
+    }
+
+    private bool IsPausePressed()
+    {
+#if ENABLE_LEGACY_INPUT_MANAGER
+        if (Input.GetKeyDown(pauseKey)) {
+            return true;
+        }
+#endif
+
+#if ENABLE_INPUT_SYSTEM
+        return Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame;
+#else
+        return false;
+#endif
+    }
+
+    private bool IsRebootPressed()
+    {
+#if ENABLE_LEGACY_INPUT_MANAGER
+        if (Input.GetKeyDown(KeyCode.R)) {
+            return true;
+        }
+#endif
+
+#if ENABLE_INPUT_SYSTEM
+        return Keyboard.current != null && Keyboard.current.rKey.wasPressedThisFrame;
+#else
+        return false;
+#endif
     }
 }
